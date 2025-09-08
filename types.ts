@@ -57,7 +57,7 @@ export type CapModel = 'person_forwards' | 'person_backwards' | 'flat_lay';
 export type PillowStyle = 'square_cotton' | 'lumbar_linen' | 'round_velvet';
 export type PillowSetting = 'on_sofa' | 'on_bed' | 'on_armchair';
 // Flat Lay Types
-export type FlatLayStyle = 'minimalist_neutral' | 'rustic_outdoors' | 'urban_streetwear' | 'cozy_autumn' | 'beach_vacation';
+export type FlatLayStyle = 'minimalist_neutral' | 'rustic_outdoors' | 'urban_streetwear' | 'cozy_autumn' | 'beach_vacation' | 'tech_office' | 'feminine_elegance' | 'dark_academia' | 'boho_chic' | 'adventure_travel';
 // Jigsaw Puzzle Types
 export type PuzzleStyle = 'rectangle_cardboard' | 'heart_shaped_wood';
 export type PuzzleSetting = 'on_wooden_table' | 'family_playing' | 'flat_lay_minimalist';

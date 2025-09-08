@@ -237,6 +237,11 @@ export const FLAT_LAY_STYLES: {id: FlatLayStyle, nameKey: string, description: s
     { id: 'urban_streetwear', nameKey: 'flatLayStyle_urban_streetwear', description: 'an urban streetwear flat lay on a concrete or asphalt background, accompanied by accessories like trendy sneakers, a beanie, headphones, and a skateboard deck.' },
     { id: 'cozy_autumn', nameKey: 'flatLayStyle_cozy_autumn', description: 'a cozy autumn-themed flat lay on a warm-toned wooden surface, featuring items like a knitted scarf, a steaming mug of coffee, fall leaves, and a book.' },
     { id: 'beach_vacation', nameKey: 'flatLayStyle_beach_vacation', description: 'a bright, beach vacation-themed flat lay on a sandy background, with accessories like sandals, a straw hat, seashells, and a pair of sunglasses.' },
+    { id: 'tech_office', nameKey: 'flatLayStyle_tech_office', description: 'a modern tech office flat lay on a clean desk mat, featuring a sleek wireless keyboard, a minimalist mouse, a tablet, and a cup of black coffee.' },
+    { id: 'feminine_elegance', nameKey: 'flatLayStyle_feminine_elegance', description: 'an elegant, feminine flat lay on a marble surface, with delicate gold jewelry, a silk scarf, a high-fashion magazine, and a single peony.' },
+    { id: 'dark_academia', nameKey: 'flatLayStyle_dark_academia', description: 'a "dark academia" themed flat lay on a dark mahogany wood surface, with vintage hardcover books, a fountain pen, a magnifying glass, and a pair of classic spectacles.' },
+    { id: 'boho_chic', nameKey: 'flatLayStyle_boho_chic', description: 'a "boho chic" flat lay on a woven rattan placemat, featuring dried pampas grass, healing crystals, a scented candle, and a piece of macrame.' },
+    { id: 'adventure_travel', nameKey: 'flatLayStyle_adventure_travel', description: 'an adventure travel themed flat lay on a vintage world map, with a leather passport holder, a brass compass, a classic film camera, and a pair of hiking boots.' },
 ];
 
 export const PUZZLE_STYLES: {id: PuzzleStyle, nameKey: string}[] = [
