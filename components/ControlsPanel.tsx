@@ -123,13 +123,20 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
           { value: '16:9', icon: AspectRatioHorizontalIcon, name: '16:9' },
           { value: '9:16', icon: AspectRatioVerticalIcon, name: '9:16' },
         ]} />
-        <ToggleButtons label={t('imageFitLabel')} value={props.imageMode} onChange={props.setImageMode} options={[
-          { value: 'fit', icon: FitIcon, name: t('imageFit_fit') },
-          { value: 'fit_blur', icon: FitBlurIcon, name: t('imageFit_fit_blur') },
-          { value: 'fit_transparent', icon: FitTransparentIcon, name: t('imageFit_fit_transparent') },
-          { value: 'crop', icon: CropIcon, name: t('imageFit_crop') },
-          { value: 'stretch', icon: StretchIcon, name: t('imageFit_stretch') },
-        ]} />
+        <SelectControl
+            label={t('presentationStyleLabel')}
+            value={props.imageMode}
+            onChange={e => props.setImageMode(e.target.value as ImageMode)}
+            options={[
+                { id: 'fit', nameKey: 'imageFit_fit' },
+                { id: 'fit_blur', nameKey: 'imageFit_fit_blur' },
+                { id: 'fit_transparent', nameKey: 'imageFit_fit_transparent' },
+                { id: 'crop', nameKey: 'imageFit_crop' },
+                { id: 'stretch', nameKey: 'imageFit_stretch' },
+                { id: 'floating', nameKey: 'imageFit_floating' },
+                { id: 'framed', nameKey: 'imageFit_framed' },
+            ]}
+        />
       </div>
 
       <button

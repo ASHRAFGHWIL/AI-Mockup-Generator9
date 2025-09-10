@@ -174,5 +174,5 @@ export type TshirtFont =
   | 'special_elite'
   | 'zilla_slab';
 
-export type ImageMode = 'fit' | 'fit_blur' | 'fit_transparent' | 'crop' | 'stretch';
+export type ImageMode = 'fit' | 'fit_blur' | 'fit_transparent' | 'crop' | 'stretch' | 'floating' | 'framed';
 export type AspectRatio = '1:1' | '16:9' | '9:16' | '4:3' | '3:4';

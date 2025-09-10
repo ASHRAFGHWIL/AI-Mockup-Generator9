@@ -44,6 +44,26 @@ const PreviewDisplay: React.FC<PreviewDisplayProps> = ({ generatedImage, isLoadi
         }
     }, [isLoading, loadingMessages]);
 
+    const getImageClasses = () => {
+      const base = 'transition-all duration-500 ease-in-out relative';
+      const sizing = (['fit', 'fit_blur', 'fit_transparent', 'floating', 'framed'].includes(imageMode))
+          ? 'max-w-full max-h-full object-contain'
+          : imageMode === 'crop'
+          ? 'w-full h-full object-cover'
+          : 'w-full h-full object-fill';
+      
+      switch (imageMode) {
+          case 'floating':
+              return `${base} ${sizing} rounded-lg transform hover:-translate-y-2 shadow-[0_35px_60px_-15px_rgba(99,102,241,0.4)]`;
+          case 'framed':
+              return `${base} ${sizing} rounded-sm border-2 border-white/50`;
+          case 'fit_transparent':
+              return `${base} ${sizing} rounded-lg`;
+          default:
+              return `${base} ${sizing} rounded-lg shadow-2xl`;
+      }
+    };
+
   return (
     <div className="w-full lg:w-2/3 xl:w-3/4 flex-grow flex flex-col items-center justify-center gap-6">
       <div className={`w-full bg-gray-900/50 rounded-lg p-4 lg:p-8 relative flex items-center justify-center transition-colors ${imageMode === 'fit_transparent' ? '!bg-transparent' : ''}`}>
@@ -73,27 +93,30 @@ const PreviewDisplay: React.FC<PreviewDisplayProps> = ({ generatedImage, isLoadi
           </div>
         )}
 
-        {generatedImage && (
-          <>
-            {imageMode === 'fit_blur' && (
-                <img 
-                    src={imageUrl} 
-                    alt=""
-                    aria-hidden="true"
-                    className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110"
-                />
-            )}
-            <img 
-              src={imageUrl}
-              alt="Generated mockup" 
-              className={
-                `transition-all duration-300 rounded-lg shadow-2xl relative
-                ${(imageMode === 'fit' || imageMode === 'fit_blur' || imageMode === 'fit_transparent') ? 'max-w-full max-h-full object-contain' : ''}
-                ${imageMode === 'crop' ? 'w-full h-full object-cover' : ''}
-                ${imageMode === 'stretch' ? 'w-full h-full object-fill' : ''}`
-              }
-            />
-          </>
+        {generatedImage && !isLoading && !error && (
+            imageMode === 'framed' ? (
+                <div className="p-3 lg:p-4 bg-gradient-to-br from-[#6b4f3a] to-[#a0846c] rounded-lg shadow-2xl">
+                    <div className="bg-gray-200 p-1 shadow-inner rounded-sm">
+                        <img src={imageUrl} alt="Generated mockup" className={getImageClasses()} />
+                    </div>
+                </div>
+            ) : (
+                <>
+                    {imageMode === 'fit_blur' && (
+                        <img 
+                            src={imageUrl} 
+                            alt=""
+                            aria-hidden="true"
+                            className="absolute inset-0 w-full h-full object-cover filter blur-xl scale-110"
+                        />
+                    )}
+                    <img 
+                        src={imageUrl}
+                        alt="Generated mockup" 
+                        className={getImageClasses()}
+                    />
+                </>
+            )
         )}
       </div>
 

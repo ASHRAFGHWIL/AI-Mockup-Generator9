@@ -332,12 +332,14 @@ export const ar = {
   puzzleStyleLabel: "نمط اللعبة",
   puzzleSettingLabel: "الإعداد",
   aspectRatioLabel: "نسبة العرض إلى الارتفاع",
-  imageFitLabel: "ملاءمة الصورة",
+  presentationStyleLabel: "نمط العرض",
   imageFit_fit: "ملاءمة",
   imageFit_fit_blur: "ملاءمة (خلفية ضبابية)",
   imageFit_fit_transparent: "ملاءمة (شفاف)",
   imageFit_crop: "قص",
   imageFit_stretch: "تمدد",
+  imageFit_floating: "عائم",
+  imageFit_framed: "مؤطر",
 
   // Preview Display
   loadingMsg1: "إحماء إبداع الذكاء الاصطناعي...",

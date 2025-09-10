@@ -332,12 +332,14 @@ export const en = {
   puzzleStyleLabel: "Puzzle Style",
   puzzleSettingLabel: "Setting",
   aspectRatioLabel: "Aspect Ratio",
-  imageFitLabel: "Image Fit",
+  presentationStyleLabel: "Presentation Style",
   imageFit_fit: "Fit",
   imageFit_fit_blur: "Fit (Blurred BG)",
   imageFit_fit_transparent: "Fit (Transparent)",
   imageFit_crop: "Crop",
   imageFit_stretch: "Stretch",
+  imageFit_floating: "Floating",
+  imageFit_framed: "Framed",
 
   // Preview Display
   loadingMsg1: "Warming up the AI's creativity...",
