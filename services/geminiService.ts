@@ -116,17 +116,17 @@ const buildApparelPrompt = (
 export const generateMockup = async (
   params: any
 ): Promise<string> => {
-  let { designSubject } = params;
+  let designForPrompt = params.designSubject;
   const { logoImage, backgroundImage } = params;
 
   // If a logo image is provided, use AI to describe it for the prompt.
   if (logoImage) {
     try {
-      designSubject = await describeImage(logoImage, 'logo');
+      designForPrompt = await describeImage(logoImage, 'logo');
     } catch (e) {
       console.error("Failed to describe logo:", e);
       // Fallback to a generic prompt if description fails
-      designSubject = "the user-uploaded logo";
+      designForPrompt = "the user-uploaded logo";
     }
   }
 
@@ -149,13 +149,23 @@ export const generateMockup = async (
   const fidelityInstruction = `The design must be a high-fidelity, pixel-perfect reproduction of the provided description. Do not alter, add, or remove any elements. Maintain the original colors and structure precisely.`;
 
   switch (productType as ProductType) {
+    case 'logo_mockup':
+      const logoContext = params.designSubject;
+      prompt = `Create an ultra-realistic 4K, high-resolution, photorealistic mockup of a logo.
+        - Logo Description: The logo is: "${designForPrompt}".
+        - Context: This logo is for "${logoContext}".
+        - Task: Generate a creative and professional mockup of this logo in a realistic setting that fits the provided context. Examples include on a building sign, a coffee cup, a business card, a website on a laptop screen, etc. The AI should choose an appropriate and visually appealing setting.
+        - Design Fidelity: ${fidelityInstruction} The logo must be perfectly and accurately reproduced. Do not alter the logo's design, colors, or text.
+        - Details: The lighting should be natural and professional. The scene should look authentic.`;
+      break;
+      
     case "tshirt":
     case "sweatshirt":
     case "hoodie":
       prompt = buildApparelPrompt(
         productType,
         params.tshirtColor,
-        designSubject,
+        designForPrompt,
         text,
         params.font,
         params.textColor,
@@ -173,7 +183,7 @@ export const generateMockup = async (
       prompt = `Create an ultra-realistic 4K, high-resolution, photorealistic product mockup.
         - Product: A ${params.color} ${apparelType}.
         - Setting: This is a flat lay photo. The setting is described as: "${flatLayDesc}".
-        - Design: The design on the ${apparelType} is: "${designSubject}" in a ${params.designStyle.replace(/_/g, ' ')} style.
+        - Design: The design on the ${apparelType} is: "${designForPrompt}" in a ${params.designStyle.replace(/_/g, ' ')} style.
         - Text: ${text ? `The design includes the text "${text}" in a ${params.font} font with ${params.textColor} color and a ${params.textStyle} style.` : 'No text in the design.'}
         - Design Fidelity: ${fidelityInstruction}
         - Details: Professional, clean lighting. The focus is on the apparel and the overall aesthetic of the flat lay.`;
@@ -183,14 +193,14 @@ export const generateMockup = async (
       prompt = `Create an ultra-realistic 4K, high-resolution, photorealistic product mockup.
         - Product: A ${params.color} ${params.bagMaterial} tote bag.
         - Setting: The bag is displayed in a lifestyle setting, like being held by a person (hands and arm visible) or sitting on a stylish surface. The background should be slightly blurred.
-        - Design: The design on the bag is: "${designSubject}" in a ${params.designStyle.replace(/_/g, ' ')} style.
+        - Design: The design on the bag is: "${designForPrompt}" in a ${params.designStyle.replace(/_/g, ' ')} style.
         - Text: ${text ? `The design includes the text "${text}" in a ${params.font} font with ${params.textColor} color and a ${params.textStyle} style.` : 'No text.'}
         - Design Fidelity: ${fidelityInstruction}`;
       break;
 
     default:
         prompt = `Create an ultra-realistic 4K, high-resolution, photorealistic photo of a ${params.color || 'white'} ${productType.replace(/_/g, ' ')} mockup.
-        - Design: A design about "${designSubject}" in a ${params.designStyle.replace(/_/g, ' ')} style.
+        - Design: A design about "${designForPrompt}" in a ${params.designStyle.replace(/_/g, ' ')} style.
         - Text: ${text ? `The design includes the text "${text}".` : 'No text.'}
         - Design Fidelity: ${fidelityInstruction}
         - Details: The product is the main focus, on a clean, slightly blurred background.`;

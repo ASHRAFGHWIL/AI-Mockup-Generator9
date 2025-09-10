@@ -56,6 +56,10 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
 
   // FIX: Corrected check for flat lay styles. The previous check `props.backgroundStyle === 'flat_lay'` caused a type error.
   const isFlatLay = props.backgroundStyle.startsWith('flat_lay');
+  
+  const isGenerateDisabled = props.productType === 'logo_mockup' 
+      ? !props.logoImage 
+      : (!props.designSubject && !props.logoImage);
 
   const renderApparelControls = () => (
     <>
@@ -99,6 +103,30 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
     </>
   );
 
+  const renderLogoMockupControls = () => (
+    <>
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">{t('logoLabel')}</h3>
+        <ImageUploadControl 
+            label={t('logoImageLabel')} 
+            image={props.logoImage} 
+            setImage={props.setLogoImage} 
+            aspect={1}
+            brightness={props.logoBrightness}
+            setBrightness={props.setLogoBrightness}
+            contrast={props.logoContrast}
+            setContrast={props.setLogoContrast}
+        />
+        <InputControl 
+            label={t('logoContextLabel')} 
+            placeholder={t('logoContextPlaceholder')} 
+            value={props.designSubject} 
+            onChange={e => props.setDesignSubject(e.target.value)} 
+        />
+      </div>
+    </>
+  );
+
   return (
     <div className="w-full lg:w-1/3 xl:w-1/4 bg-gray-900 text-white p-6 overflow-y-auto h-full flex flex-col gap-8 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
       <div className="flex items-center justify-between">
@@ -115,6 +143,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
       <SelectControl label={t('productTypeLabel')} value={props.productType} onChange={e => props.setProductType(e.target.value as ProductType)} options={PRODUCT_TYPES} />
 
       {['tshirt', 'sweatshirt', 'hoodie', 'flat_lay'].includes(props.productType) && renderApparelControls()}
+      {props.productType === 'logo_mockup' && renderLogoMockupControls()}
       
       <div className="space-y-4 mt-auto pt-6 border-t border-gray-700">
         <h3 className="text-lg font-semibold text-gray-200">Image Settings</h3>
@@ -141,7 +170,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
 
       <button
         onClick={props.onGenerate}
-        disabled={props.isLoading || (!props.designSubject && !props.logoImage)}
+        disabled={props.isLoading || isGenerateDisabled}
         className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-900 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold py-4 px-4 rounded-lg shadow-lg transition-all transform hover:scale-105"
       >
         <WandIcon className="w-6 h-6" />

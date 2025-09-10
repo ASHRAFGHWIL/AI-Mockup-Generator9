@@ -19,6 +19,7 @@ export const en = {
   productType_sticker: "Sticker",
   productType_poster: "Poster",
   productType_jigsaw_puzzle: "Jigsaw Puzzle",
+  productType_logo_mockup: "Logo Mockup",
 
   // Bag Materials
   bagMaterial_canvas: "Canvas",
@@ -288,7 +289,10 @@ export const en = {
   designSubjectLabel: "Design Subject",
   designSubjectPlaceholder: "e.g., a fierce lion head",
   designSubjectFromLogoPlaceholder: "Design will be based on uploaded logo",
-  logoImageLabel: "Logo Image (Optional)",
+  logoImageLabel: "Logo Image",
+  logoLabel: "Logo",
+  logoContextLabel: "Logo Context / Industry (Optional)",
+  logoContextPlaceholder: "e.g., modern tech company, vintage bakery",
   logoBrightnessLabel: "Logo Brightness",
   logoContrastLabel: "Logo Contrast",
   backgroundImageLabel: "Background Image (Optional)",

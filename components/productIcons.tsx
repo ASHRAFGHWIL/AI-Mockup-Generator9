@@ -8,6 +8,13 @@ const IconProps = {
   strokeWidth: 1.5,
 };
 
+export const LogoMockupIcon = ({ className }: { className?: string }) => (
+    <svg {...IconProps} className={className}>
+        <path d="M3.75 3.75v16.5h16.5V3.75H3.75z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M12 15.062l-2.5 1.438 0.688-2.813-2.125-1.938 2.875-0.25L12 9l1.062 2.5 2.875 0.25-2.125 1.938 0.688 2.813L12 15.062z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
 export const TshirtIcon = ({ className }: { className?: string }) => (
   <svg {...IconProps} className={className}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M9 4.5v1.5l-2.5 2.5V19.5h11V8.5L15 6V4.5h-6z" />

@@ -17,7 +17,8 @@ export type ProductType =
   | 'phone_case' 
   | 'sticker' 
   | 'poster'
-  | 'jigsaw_puzzle';
+  | 'jigsaw_puzzle'
+  | 'logo_mockup';
 
 export type BagMaterial = 'canvas' | 'leather' | 'nylon' | 'denim';
 export type FrameStyle = 'classic_ornate' | 'modern_minimalist' | 'rustic_barnwood' | 'modern_mahogany';

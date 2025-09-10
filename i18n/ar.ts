@@ -19,6 +19,7 @@ export const ar = {
   productType_sticker: "ملصق",
   productType_poster: "ملصق حائط",
   productType_jigsaw_puzzle: "لعبة تركيب صور",
+  productType_logo_mockup: "نموذج شعار",
 
   // Bag Materials
   bagMaterial_canvas: "قماش",
@@ -288,7 +289,10 @@ export const ar = {
   designSubjectLabel: "موضوع التصميم",
   designSubjectPlaceholder: "مثال: رأس أسد شرس",
   designSubjectFromLogoPlaceholder: "سيتم التصميم بناءً على الشعار المرفوع",
-  logoImageLabel: "صورة الشعار (اختياري)",
+  logoImageLabel: "صورة الشعار",
+  logoLabel: "الشعار",
+  logoContextLabel: "سياق / مجال الشعار (اختياري)",
+  logoContextPlaceholder: "مثال: شركة تقنية حديثة، مخبز قديم",
   logoBrightnessLabel: "سطوع الشعار",
   logoContrastLabel: "تباين الشعار",
   backgroundImageLabel: "صورة الخلفية (اختياري)",

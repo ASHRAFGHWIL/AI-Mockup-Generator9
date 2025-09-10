@@ -1,6 +1,6 @@
 import React from 'react';
 import type { DesignStyle, ModelAudience, TshirtFont, ProductType, BagMaterial, TextStyle, FrameStyle, FrameModel, MugStyle, MugModel, SipperGlassStyle, SipperGlassModel, TumblerStyle, TumblerModel, HalloweenTumblerStyle, HalloweenTumblerSetting, TumblerTrioStyle, TumblerTrioSetting, EngravingMaterial, PhoneCaseStyle, PhoneCaseModel, StickerStyle, StickerSetting, PosterStyle, PosterSetting, WalletStyle, WalletModel, CapStyle, CapModel, PillowStyle, PillowSetting, FlatLayStyle, PuzzleStyle, PuzzleSetting, BackgroundStyle } from './types';
-import { TshirtIcon, SweatshirtIcon, HoodieIcon, BagIcon, FrameIcon, MugIcon, SipperGlassIcon, TumblerIcon, HalloweenTumblerIcon, TumblerTrioIcon, LaserIcon, PhoneCaseIcon, StickerIcon, PosterIcon, WalletIcon, CapIcon, PillowIcon, FlatLayIcon, PuzzleIcon } from './components/productIcons';
+import { TshirtIcon, SweatshirtIcon, HoodieIcon, BagIcon, FrameIcon, MugIcon, SipperGlassIcon, TumblerIcon, HalloweenTumblerIcon, TumblerTrioIcon, LaserIcon, PhoneCaseIcon, StickerIcon, PosterIcon, WalletIcon, CapIcon, PillowIcon, FlatLayIcon, PuzzleIcon, LogoMockupIcon } from './components/productIcons';
 
 export const PRODUCT_COLORS = [
   { name: 'White', value: '#FFFFFF' },
@@ -49,6 +49,7 @@ export const PRODUCT_COLORS = [
 ];
 
 export const PRODUCT_TYPES: {id: ProductType, nameKey: string, icon: React.FC<{ className?: string }>}[] = [
+    { id: 'logo_mockup', nameKey: 'productType_logo_mockup', icon: LogoMockupIcon },
     { id: 'tshirt', nameKey: 'productType_tshirt', icon: TshirtIcon },
     { id: 'sweatshirt', nameKey: 'productType_sweatshirt', icon: SweatshirtIcon },
     { id: 'hoodie', nameKey: 'productType_hoodie', icon: HoodieIcon },
