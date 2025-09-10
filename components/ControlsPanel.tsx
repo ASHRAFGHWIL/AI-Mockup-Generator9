@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import type { DesignOptions, SetDesignOptions, TextStyle, ImageMode, DesignStyle, ModelPose, ModelAudience, TshirtFont, BagMaterial, WalletStyle, WalletModel, FrameStyle, FrameModel, MugStyle, MugModel, SipperGlassStyle, SipperGlassModel, TumblerStyle, TumblerModel, HalloweenTumblerStyle, HalloweenTumblerSetting, TumblerTrioStyle, TumblerTrioSetting, EngravingMaterial, PhoneCaseStyle, PhoneCaseModel, StickerStyle, StickerSetting, PosterStyle, PosterSetting, CapStyle, CapModel, PillowStyle, PillowSetting, FlatLayStyle, PuzzleStyle, PuzzleSetting, ProductType, AspectRatio } from '../types';
+import React, { useRef, useState } from 'react';
+import type { DesignOptions, SetDesignOptions, TextStyle, ImageMode, DesignStyle, ModelPose, ModelAudience, TshirtFont, BagMaterial, WalletStyle, WalletModel, FrameStyle, FrameModel, MugStyle, MugModel, SipperGlassStyle, SipperGlassModel, TumblerStyle, TumblerModel, HalloweenTumblerStyle, HalloweenTumblerSetting, TumblerTrioStyle, TumblerTrioSetting, EngravingMaterial, PhoneCaseStyle, PhoneCaseModel, StickerStyle, StickerSetting, PosterStyle, PosterSetting, CapStyle, CapModel, PillowStyle, PillowSetting, FlatLayStyle, PuzzleStyle, PuzzleSetting, ProductType, AspectRatio, Preset } from '../types';
 import { PRODUCT_COLORS, DESIGN_STYLES, MODEL_POSES, MODEL_AUDIENCES, TSHIRT_FONTS, PRODUCT_TYPES, BAG_MATERIALS, TEXT_STYLES, FRAME_STYLES, FRAME_MODELS, MUG_STYLES, MUG_MODELS, SIPPER_GLASS_STYLES, SIPPER_GLASS_MODELS, TUMBLER_STYLES, TUMBLER_MODELS, HALLOWEEN_TUMBLER_STYLES, HALLOWEEN_TUMBLER_SETTINGS, TUMBLER_TRIO_STYLES, TUMBLER_TRIO_SETTINGS, ENGRAVING_MATERIALS, PHONE_CASE_STYLES, PHONE_CASE_MODELS, STICKER_STYLES, STICKER_SETTINGS, POSTER_STYLES, POSTER_SETTINGS, WALLET_STYLES, WALLET_MODELS, CAP_STYLES, CAP_MODELS, PILLOW_STYLES, PILLOW_SETTINGS, FLAT_LAY_STYLES, PUZZLE_STYLES, PUZZLE_SETTINGS } from '../constants';
 import { UploadIcon, TrashIcon, WandIcon, FitIcon, FitBlurIcon, FitTransparentIcon, CropIcon, StretchIcon, AspectRatioSquareIcon, AspectRatioHorizontalIcon, AspectRatioVerticalIcon } from './icons';
 import ColorPicker from './ColorPicker';
@@ -13,6 +13,10 @@ interface ControlsPanelProps {
   handleLogoChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   imageMode: ImageMode;
   setImageMode: React.Dispatch<React.SetStateAction<ImageMode>>;
+  presets: Preset[];
+  onSavePreset: (name: string) => void;
+  onLoadPreset: (id: string) => void;
+  onDeletePreset: (id: string) => void;
 }
 
 const getTextStylePreview = (styleId: TextStyle): React.CSSProperties => {
@@ -49,9 +53,11 @@ const getTextStylePreview = (styleId: TextStyle): React.CSSProperties => {
     }
 };
 
-const ControlsPanel: React.FC<ControlsPanelProps> = ({ design, setDesign, onGenerate, isLoading, handleLogoChange, imageMode, setImageMode }) => {
+const ControlsPanel: React.FC<ControlsPanelProps> = ({ design, setDesign, onGenerate, isLoading, handleLogoChange, imageMode, setImageMode, presets, onSavePreset, onLoadPreset, onDeletePreset }) => {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [presetName, setPresetName] = useState('');
+  const [selectedPresetId, setSelectedPresetId] = useState('');
 
   const removeLogo = () => {
     setDesign(d => ({ ...d, logo: null }));
@@ -81,11 +87,85 @@ const ControlsPanel: React.FC<ControlsPanelProps> = ({ design, setDesign, onGene
     return t(key);
   }
 
+  const handlePresetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const id = e.target.value;
+    setSelectedPresetId(id);
+    if (id) {
+      onLoadPreset(id);
+    }
+  };
+
+  const handleSaveClick = () => {
+    onSavePreset(presetName);
+    setPresetName('');
+  };
+
+  const handleDeleteClick = () => {
+    if (selectedPresetId) {
+      onDeletePreset(selectedPresetId);
+      setSelectedPresetId('');
+    }
+  };
+
   const productColorLabel = getProductColorLabel();
 
   return (
     <div className="w-full lg:w-1/3 xl:w-1/4 bg-gray-800 p-6 rounded-lg shadow-2xl space-y-6">
       <h2 className="text-2xl font-bold text-white">{t('controlsTitle')}</h2>
+
+       {/* Presets Section */}
+      <div className="space-y-4 p-4 border border-gray-700 rounded-lg">
+        <h3 className="text-lg font-semibold text-white">{t('presetsTitle')}</h3>
+        <div>
+          <label htmlFor="preset-name" className="block text-sm font-medium text-gray-300">{t('presetNameLabel')}</label>
+          <div className="mt-1 flex gap-2">
+            <input
+              type="text"
+              id="preset-name"
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              placeholder={t('presetNamePlaceholder')}
+              className="flex-grow bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition"
+            />
+            <button
+              onClick={handleSaveClick}
+              disabled={!presetName.trim()}
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-500 text-white font-bold py-2 px-4 rounded-md shadow-sm transition-colors"
+              title={t('savePresetButton')}
+            >
+              {t('savePresetButton')}
+            </button>
+          </div>
+        </div>
+        
+        {presets.length > 0 && (
+          <div>
+            <label htmlFor="load-preset" className="block text-sm font-medium text-gray-300">{t('loadPresetLabel')}</label>
+            <div className="mt-1 flex gap-2">
+              <select
+                id="load-preset"
+                value={selectedPresetId}
+                onChange={handlePresetChange}
+                className="flex-grow block w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 transition"
+              >
+                <option value="">{t('loadPresetDefaultOption')}</option>
+                {presets.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+              <button
+                onClick={handleDeleteClick}
+                disabled={!selectedPresetId}
+                className="text-red-400 hover:text-red-300 disabled:text-gray-500 disabled:cursor-not-allowed p-1"
+                title={t('deletePresetButton')}
+                aria-label={t('deletePresetButton')}
+              >
+                <TrashIcon className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Product Type */}
       <div>

@@ -203,6 +203,14 @@ const getPoseDescription = (pose: ModelPose): string => {
         case 'adjusting_cuff': return 'a close-up shot focusing on the model\'s torso and arm as they subtly adjust the cuff of their sleeve, highlighting the garment details,';
         case 'hands_on_hips_confident': return 'a confident power pose, standing with both hands placed firmly on the hips, looking directly at the camera,';
         case 'celebrating_excited': return 'a joyful, energetic pose as if celebrating, with arms possibly raised and a happy, excited expression,';
+        case 'professional_urban_rooftop': return 'standing on a modern urban rooftop at dusk, with a beautifully blurred city skyline and bokeh lights in the background,';
+        case 'creative_art_gallery': return 'standing in a bright, minimalist art gallery, with abstract paintings blurred on the wall behind them,';
+        case 'professional_modern_office': return 'in a sleek, modern office environment with large windows and blurred, out-of-focus professional background elements,';
+        case 'creative_neon_city_night': return 'at night on a vibrant city street, surrounded by the soft glow and bokeh of colorful neon signs,';
+        case 'natural_forest_path': return 'standing on a tranquil path in a lush, green forest, with sunlight filtering through the trees creating a dappled, out-of-focus background,';
+        case 'urban_graffiti_wall': return 'casually leaning against a vibrant, artistic graffiti wall, with the colorful artwork heavily blurred to keep focus on the model,';
+        case 'cozy_bookstore': return 'in a warm and cozy bookstore, surrounded by shelves of out-of-focus books, creating a literary and inviting atmosphere,';
+        case 'beach_golden_hour': return 'standing on a serene beach during the golden hour, with the setting sun creating a warm, hazy, and beautifully blurred background over the ocean,';
         // flat_lay_simple is handled directly in generateBaseImage and doesn't use this function.
         case 'flat_lay_simple': return ''; 
         default: return 'standing pose,';
@@ -453,6 +461,7 @@ const getTextStyleDescription = (style: TextStyle, contrastColor: 'white' | 'bla
 const generateBaseImage = async (options: DesignOptions): Promise<string> => {
     const { productType, productColor, pose, audience, bagMaterial, frameStyle, frameModel, mugStyle, mugModel, sipperGlassStyle, sipperGlassModel, tumblerStyle, tumblerModel, halloweenTumblerStyle, halloweenTumblerSetting, tumblerTrioStyle, tumblerTrioSetting, phoneCaseStyle, phoneCaseModel, stickerStyle, stickerSetting, posterStyle, posterSetting, walletStyle, walletModel, capStyle, capModel, pillowStyle, pillowSetting, flatLayStyle, puzzleStyle, puzzleSetting, aspectRatio } = options;
     let prompt;
+    let backgroundPrompt = '';
 
     switch (productType) {
         case 'tshirt':
@@ -472,7 +481,15 @@ const generateBaseImage = async (options: DesignOptions): Promise<string> => {
             } else {
                 const audienceDescription = getAudienceDescription(audience);
                 const poseDescription = getPoseDescription(pose);
-                prompt = `Commercial product mockup photo, waist-up portrait. A hyperrealistic model, ${audienceDescription}, in a ${poseDescription} with a natural expression. The model has extremely detailed, natural skin texture with subtle pores and looks completely authentic. The model is wearing a plain, unbranded, high-quality ${getColorName(productColor)} ${productGarment} with detailed fabric weave and texture visible. The garment is shown clearly for a mockup. The background is a clean, modern, heavily out-of-focus studio setting. ${qualityPrompt}`;
+                
+                // Determine background based on pose
+                if (pose.includes('professional') || pose.includes('creative') || pose.includes('natural') || pose.includes('urban') || pose.includes('cozy') || pose.includes('beach')) {
+                    backgroundPrompt = ''; // The pose description now includes the background
+                } else {
+                    backgroundPrompt = 'The background is a clean, modern, heavily out-of-focus studio setting.';
+                }
+
+                prompt = `Commercial product mockup photo, waist-up portrait. A hyperrealistic model, ${audienceDescription}, in a ${poseDescription} with a natural expression. The model has extremely detailed, natural skin texture with subtle pores and looks completely authentic. The model is wearing a plain, unbranded, high-quality ${getColorName(productColor)} ${productGarment} with detailed fabric weave and texture visible. The garment is shown clearly for a mockup. ${backgroundPrompt} ${qualityPrompt}`;
             }
             break;
         }
@@ -555,12 +572,12 @@ const generateBaseImage = async (options: DesignOptions): Promise<string> => {
     }
 
     // FIX: Explicitly provide the response type to withRetry to fix errors on accessing response.generatedImages.
-    // FIX: Moved 'safetySettings' to be a top-level property. It is not part of the 'config' object for 'generateImages'.
+    // FIX: Moved 'safetySettings' into the 'config' object as it is not a top-level parameter for generateImages.
     const response = await withRetry<GenerateImagesResponse>(() => ai.models.generateImages({
         model: 'imagen-4.0-generate-001',
         prompt: prompt,
-        safetySettings: safetySettings,
         config: {
+          safetySettings: safetySettings,
           numberOfImages: 1,
           outputMimeType: 'image/png',
           aspectRatio: aspectRatio,

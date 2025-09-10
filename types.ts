@@ -2,7 +2,7 @@
 import React from 'react';
 
 export type DesignStyle = 'classic' | 'split' | 'sketch' | 'slasher' | 'vintage_stamp' | 'retro_wave' | 'minimalist_line' | 'grunge_overlay' | 'full_wrap' | 'full_front' | 'cyberpunk_glitch' | 'stacked_text' | 'emblem' | 'photo_text' | 'american_traditional_tattoo' | 'watercolor_splash' | 'art_deco' | 'pop_art' | 'cosmic_galaxy' | 'japanese_ukiyo-e' | 'distressed_vintage' | 'typography_focus' | 'abstract_geometric' | 'vintage_poster' | 'geometric_pattern' | 'hand_drawn_sketch';
-export type ModelPose = 'flat_lay_simple' | 'standing' | 'sitting' | 'sitting_floor_cozy' | 'recumbent' | 'smiling_glasses' | 'back' | 'drinking_tea' | 'jumping' | 'dancing' | 'meditating' | 'heroic' | 'action' | 'yoga' | 'casual_lean' | 'walking_street' | 'laughing' | 'arms_crossed' | 'thinking' | 'hands_in_pockets' | 'closeup_casual' | 'sitting_hand_hip' | 'sitting_on_counter' | 'leaning_against_railing' | 'looking_over_shoulder' | 'running_action_shot' | 'adjusting_cuff' | 'hands_on_hips_confident' | 'celebrating_excited';
+export type ModelPose = 'flat_lay_simple' | 'standing' | 'sitting' | 'sitting_floor_cozy' | 'recumbent' | 'smiling_glasses' | 'back' | 'drinking_tea' | 'jumping' | 'dancing' | 'meditating' | 'heroic' | 'action' | 'yoga' | 'casual_lean' | 'walking_street' | 'laughing' | 'arms_crossed' | 'thinking' | 'hands_in_pockets' | 'closeup_casual' | 'sitting_hand_hip' | 'sitting_on_counter' | 'leaning_against_railing' | 'looking_over_shoulder' | 'running_action_shot' | 'adjusting_cuff' | 'hands_on_hips_confident' | 'celebrating_excited' | 'professional_urban_rooftop' | 'creative_art_gallery' | 'professional_modern_office' | 'creative_neon_city_night' | 'natural_forest_path' | 'urban_graffiti_wall' | 'cozy_bookstore' | 'beach_golden_hour';
 export type ModelAudience = 
   // Female
   'teenager_female_skater' |
@@ -144,6 +144,12 @@ export interface DesignOptions {
   // Puzzle specific
   puzzleStyle: PuzzleStyle;
   puzzleSetting: PuzzleSetting;
+}
+
+export interface Preset {
+  id: string;
+  name: string;
+  options: DesignOptions;
 }
 
 export type SetDesignOptions = React.Dispatch<React.SetStateAction<DesignOptions>>;

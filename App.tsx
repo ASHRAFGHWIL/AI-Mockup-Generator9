@@ -1,8 +1,8 @@
-import React, { useState, useRef, useMemo, useCallback } from 'react';
+import React, { useState, useRef, useMemo, useCallback, useEffect } from 'react';
 import ControlsPanel from './components/ControlsPanel';
 import PreviewDisplay from './components/PreviewDisplay';
 import { WandIcon } from './components/icons';
-import type { DesignOptions, ImageMode } from './types';
+import type { DesignOptions, ImageMode, Preset } from './types';
 import { generateMockup as generateMockupFromApi } from './services/geminiService';
 import { generateDesignPng, generateEngravingSvg, generateTextOnlySvg, generateTextOnlyPng } from './services/svgService';
 import { LanguageContext, useTranslation, Language } from './hooks/useTranslation';
@@ -89,8 +89,31 @@ const AppContent: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [imageMode, setImageMode] = useState<ImageMode>('fit_blur');
+  const [presets, setPresets] = useState<Preset[]>([]);
 
   const logoFileRef = useRef<File | null>(null);
+
+  // Load presets from localStorage on initial render
+  useEffect(() => {
+    try {
+      const savedPresets = localStorage.getItem('mockupGeneratorPresets');
+      if (savedPresets) {
+        setPresets(JSON.parse(savedPresets));
+      }
+    } catch (e) {
+      console.error("Failed to load presets from localStorage", e);
+    }
+  }, []);
+
+  // Save presets to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem('mockupGeneratorPresets', JSON.stringify(presets));
+    } catch (e) {
+      console.error("Failed to save presets to localStorage", e);
+    }
+  }, [presets]);
+
 
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'ar' : 'en');
@@ -292,6 +315,59 @@ const AppContent: React.FC = () => {
     }
   };
 
+  const handleSavePreset = (name: string) => {
+    if (!name.trim()) {
+      setError(t('errorPresetNameRequired'));
+      return;
+    }
+    const newPreset: Preset = {
+      id: Date.now().toString(),
+      name,
+      options: design,
+    };
+    setPresets(prevPresets => [...prevPresets, newPreset]);
+    setError(null);
+  };
+
+  const b64toFile = (b64Data: string, filename = 'logo.png'): File => {
+    const arr = b64Data.split(',');
+    const mimeMatch = arr[0].match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'image/png';
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  const handleLoadPreset = (id: string) => {
+    const presetToLoad = presets.find(p => p.id === id);
+    if (presetToLoad) {
+      setDesign(presetToLoad.options);
+      if (presetToLoad.options.logo) {
+        try {
+          logoFileRef.current = b64toFile(presetToLoad.options.logo);
+        } catch(e) {
+            console.error("Failed to reconstruct file from base64 string", e);
+            setError("Could not load the logo from the preset.");
+            logoFileRef.current = null;
+        }
+      } else {
+        logoFileRef.current = null;
+      }
+      setGeneratedImage(null);
+      setError(null);
+    }
+  };
+
+  const handleDeletePreset = (id: string) => {
+    if (window.confirm(t('confirmDeletePreset'))) {
+        setPresets(prevPresets => prevPresets.filter(p => p.id !== id));
+    }
+  };
+
   return (
     <div className="bg-gray-900 min-h-screen text-white p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -321,6 +397,10 @@ const AppContent: React.FC = () => {
             handleLogoChange={handleLogoChange}
             imageMode={imageMode}
             setImageMode={setImageMode}
+            presets={presets}
+            onSavePreset={handleSavePreset}
+            onLoadPreset={handleLoadPreset}
+            onDeletePreset={handleDeletePreset}
           />
           <PreviewDisplay 
             generatedImage={generatedImage} 
