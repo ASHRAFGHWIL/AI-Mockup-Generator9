@@ -1,5 +1,5 @@
 import React from 'react';
-import type { DesignStyle, ModelPose, ModelAudience, TshirtFont, ProductType, BagMaterial, TextStyle, FrameStyle, FrameModel, MugStyle, MugModel, SipperGlassStyle, SipperGlassModel, TumblerStyle, TumblerModel, HalloweenTumblerStyle, HalloweenTumblerSetting, TumblerTrioStyle, TumblerTrioSetting, EngravingMaterial, PhoneCaseStyle, PhoneCaseModel, StickerStyle, StickerSetting, PosterStyle, PosterSetting, WalletStyle, WalletModel, CapStyle, CapModel, PillowStyle, PillowSetting, FlatLayStyle, PuzzleStyle, PuzzleSetting } from './types';
+import type { DesignStyle, ModelAudience, TshirtFont, ProductType, BagMaterial, TextStyle, FrameStyle, FrameModel, MugStyle, MugModel, SipperGlassStyle, SipperGlassModel, TumblerStyle, TumblerModel, HalloweenTumblerStyle, HalloweenTumblerSetting, TumblerTrioStyle, TumblerTrioSetting, EngravingMaterial, PhoneCaseStyle, PhoneCaseModel, StickerStyle, StickerSetting, PosterStyle, PosterSetting, WalletStyle, WalletModel, CapStyle, CapModel, PillowStyle, PillowSetting, FlatLayStyle, PuzzleStyle, PuzzleSetting, BackgroundStyle } from './types';
 import { TshirtIcon, SweatshirtIcon, HoodieIcon, BagIcon, FrameIcon, MugIcon, SipperGlassIcon, TumblerIcon, HalloweenTumblerIcon, TumblerTrioIcon, LaserIcon, PhoneCaseIcon, StickerIcon, PosterIcon, WalletIcon, CapIcon, PillowIcon, FlatLayIcon, PuzzleIcon } from './components/productIcons';
 
 export const PRODUCT_COLORS = [
@@ -283,6 +283,21 @@ export const DESIGN_STYLES: {id: DesignStyle, nameKey: string}[] = [
     { id: 'vintage_poster', nameKey: 'designStyle_vintage_poster' },
     { id: 'geometric_pattern', nameKey: 'designStyle_geometric_pattern' },
     { id: 'hand_drawn_sketch', nameKey: 'designStyle_hand_drawn_sketch' },
+    { id: 'tribal_pattern', nameKey: 'designStyle_tribal_pattern' },
+    { id: 'pixel_art', nameKey: 'designStyle_pixel_art' },
+    { id: 'steampunk', nameKey: 'designStyle_steampunk' },
+    { id: 'gothic', nameKey: 'designStyle_gothic' },
+    { id: 'floral_pattern', nameKey: 'designStyle_floral_pattern' },
+    { id: 'animal_print', nameKey: 'designStyle_animal_print' },
+    { id: 'nautical', nameKey: 'designStyle_nautical' },
+    { id: 'op_art', nameKey: 'designStyle_op_art' },
+    { id: 'surrealism', nameKey: 'designStyle_surrealism' },
+    { id: 'cubism', nameKey: 'designStyle_cubism' },
+    { id: 'psychedelic', nameKey: 'designStyle_psychedelic' },
+    { id: 'zentangle', nameKey: 'designStyle_zentangle' },
+    { id: 'street_art_graffiti', nameKey: 'designStyle_street_art_graffiti' },
+    { id: 'memphis_design', nameKey: 'designStyle_memphis_design' },
+    { id: 'bauhaus', nameKey: 'designStyle_bauhaus' },
 ];
 
 export const TEXT_STYLES: {id: TextStyle, nameKey: string}[] = [
@@ -306,47 +321,21 @@ export const TEXT_STYLES: {id: TextStyle, nameKey: string}[] = [
     { id: 'varsity', nameKey: 'textStyle_varsity' },
 ];
 
-export const MODEL_POSES: {id: ModelPose, nameKey: string}[] = [
-    { id: 'flat_lay_simple', nameKey: 'modelPose_flat_lay_simple' },
-    { id: 'standing', nameKey: 'modelPose_standing' },
-    { id: 'closeup_casual', nameKey: 'modelPose_closeup_casual' },
-    { id: 'professional_office_standing', nameKey: 'modelPose_professional_office_standing' },
-    { id: 'urban_professional_walking', nameKey: 'modelPose_urban_professional_walking' },
-    { id: 'art_gallery_viewing', nameKey: 'modelPose_art_gallery_viewing' },
-    { id: 'creative_studio_loft', nameKey: 'modelPose_creative_studio_loft' },
-    { id: 'coffee_shop_thoughtful', nameKey: 'modelPose_coffee_shop_thoughtful' },
-    { id: 'mountain_summit_view', nameKey: 'modelPose_mountain_summit_view' },
-    { id: 'beach_sunset_walk', nameKey: 'modelPose_beach_sunset_walk' },
-    { id: 'forest_trail_hike', nameKey: 'modelPose_forest_trail_hike' },
-    { id: 'rooftop_city_dusk', nameKey: 'modelPose_rooftop_city_dusk' },
-    { id: 'neon_urban_night', nameKey: 'modelPose_neon_urban_night' },
-    { id: 'geometric_abstract_background', nameKey: 'modelPose_geometric_abstract_background' },
-    { id: 'sitting', nameKey: 'modelPose_sitting' },
-    { id: 'sitting_floor_cozy', nameKey: 'modelPose_sitting_floor_cozy' },
-    { id: 'sitting_hand_hip', nameKey: 'modelPose_sitting_hand_hip' },
-    { id: 'sitting_on_counter', nameKey: 'modelPose_sitting_on_counter' },
-    { id: 'recumbent', nameKey: 'modelPose_recumbent' },
-    { id: 'smiling_glasses', nameKey: 'modelPose_smiling_glasses' },
-    { id: 'back', nameKey: 'modelPose_back' },
-    { id: 'drinking_tea', nameKey: 'modelPose_drinking_tea' },
-    { id: 'jumping', nameKey: 'modelPose_jumping' },
-    { id: 'dancing', nameKey: 'modelPose_dancing' },
-    { id: 'meditating', nameKey: 'modelPose_meditating' },
-    { id: 'heroic', nameKey: 'modelPose_heroic' },
-    { id: 'action', nameKey: 'modelPose_action' },
-    { id: 'yoga', nameKey: 'modelPose_yoga' },
-    { id: 'casual_lean', nameKey: 'modelPose_casual_lean' },
-    { id: 'walking_street', nameKey: 'modelPose_walking_street' },
-    { id: 'laughing', nameKey: 'modelPose_laughing' },
-    { id: 'arms_crossed', nameKey: 'modelPose_arms_crossed' },
-    { id: 'thinking', nameKey: 'modelPose_thinking' },
-    { id: 'hands_in_pockets', nameKey: 'modelPose_hands_in_pockets' },
-    { id: 'leaning_against_railing', nameKey: 'modelPose_leaning_against_railing' },
-    { id: 'looking_over_shoulder', nameKey: 'modelPose_looking_over_shoulder' },
-    { id: 'running_action_shot', nameKey: 'modelPose_running_action_shot' },
-    { id: 'adjusting_cuff', nameKey: 'modelPose_adjusting_cuff' },
-    { id: 'hands_on_hips_confident', nameKey: 'modelPose_hands_on_hips_confident' },
-    { id: 'celebrating_excited', nameKey: 'modelPose_celebrating_excited' },
+export const BACKGROUND_STYLES: {id: BackgroundStyle, nameKey: string, description: string}[] = [
+    // Model-based
+    { id: 'studio_plain', nameKey: 'backgroundStyle_studio_plain', description: 'a model in a clean, minimalist studio setting with a plain, neutral-colored background (e.g., light gray, beige, or white)' },
+    { id: 'studio_vibrant_color', nameKey: 'backgroundStyle_studio_vibrant_color', description: 'a model in a professional studio setting against a vibrant, solid-color background like electric blue or hot pink' },
+    { id: 'outdoor_natural_park', nameKey: 'backgroundStyle_outdoor_natural_park', description: 'a model in a beautiful outdoor nature scene, such as a lush park with dappled sunlight, a serene beach at sunset, or a field of wildflowers' },
+    { id: 'outdoor_urban_street', nameKey: 'backgroundStyle_outdoor_urban_street', description: 'a model on a dynamic urban street, with a background of interesting architecture, a colorful graffiti wall, or a bustling crosswalk with blurred city lights' },
+    { id: 'indoor_cozy_cafe', nameKey: 'backgroundStyle_indoor_cozy_cafe', description: 'a model in a warm and cozy indoor setting, such as a hygge-style living room with a fireplace, a sunlit library, or a rustic coffee shop with ambient lighting' },
+    { id: 'indoor_modern_loft', nameKey: 'backgroundStyle_indoor_modern_loft', description: 'a model in a stylish, modern loft apartment with industrial elements like exposed brick walls, large windows, and minimalist furniture' },
+    { id: 'simple_standing_pose', nameKey: 'backgroundStyle_simple_standing_pose', description: 'a model in a full-body standing pose against a simple, slightly blurred, out-of-focus neutral background' },
+    { id: 'simple_sitting_pose', nameKey: 'backgroundStyle_simple_sitting_pose', description: 'a model in a natural sitting pose (e.g., on a stool, steps, or floor) against a simple, slightly blurred, out-of-focus neutral background' },
+    { id: 'simple_action_shot', nameKey: 'backgroundStyle_simple_action_shot', description: 'a dynamic action shot of a model (e.g., walking, laughing, or jumping) in a simple, out-of-focus outdoor setting to emphasize movement' },
+    // Flat Lay
+    { id: 'flat_lay_minimalist_wood', nameKey: 'backgroundStyle_flat_lay_minimalist_wood', description: 'a minimalist flat lay of the apparel on a clean, light-colored wooden surface. The scene is styled with simple, elegant props like a small plant or a magazine. No model.' },
+    { id: 'flat_lay_styled_concrete', nameKey: 'backgroundStyle_flat_lay_styled_concrete', description: 'a modern, styled flat lay of the apparel on a textured concrete surface. The scene includes edgy, contemporary props like sunglasses and a smartphone. No model.' },
+    { id: 'flat_lay_fabric_texture', nameKey: 'backgroundStyle_flat_lay_fabric_texture', description: 'a soft, cozy flat lay of the folded apparel on a contrasting fabric background, like linen or a chunky knit blanket. No model.' },
 ];
 
 export const MODEL_AUDIENCES: {id: ModelAudience, nameKey: string, description: string}[] = [

@@ -1,9 +1,10 @@
 import React from 'react';
+import ReactCrop, { centerCrop, makeAspectCrop, type Crop, type PixelCrop } from 'react-image-crop';
 import {
-  PRODUCT_TYPES, PRODUCT_COLORS, DESIGN_STYLES, TEXT_STYLES, MODEL_POSES, MODEL_AUDIENCES, TSHIRT_FONTS,
+  PRODUCT_TYPES, PRODUCT_COLORS, DESIGN_STYLES, TEXT_STYLES, BACKGROUND_STYLES, MODEL_AUDIENCES, TSHIRT_FONTS,
 } from '../constants';
 import type {
-  ProductType, DesignStyle, ModelPose, ModelAudience, TshirtFont, TextStyle, AspectRatio, ImageMode
+  ProductType, DesignStyle, ModelAudience, TshirtFont, TextStyle, AspectRatio, ImageMode, BackgroundStyle
 } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 import ColorPicker from './ColorPicker';
@@ -16,6 +17,10 @@ interface ControlsPanelProps {
   setDesignSubject: (value: string) => void;
   logoImage: string | null;
   setLogoImage: (value: string | null) => void;
+  logoBrightness: number;
+  setLogoBrightness: (value: number) => void;
+  logoContrast: number;
+  setLogoContrast: (value: number) => void;
   backgroundImage: string | null;
   setBackgroundImage: (value: string | null) => void;
   text: string;
@@ -32,8 +37,8 @@ interface ControlsPanelProps {
   setDesignStyle: (value: DesignStyle) => void;
   modelAudience: ModelAudience;
   setModelAudience: (value: ModelAudience) => void;
-  modelPose: ModelPose;
-  setModelPose: (value: ModelPose) => void;
+  backgroundStyle: BackgroundStyle;
+  setBackgroundStyle: (value: BackgroundStyle) => void;
   aspectRatio: AspectRatio;
   setAspectRatio: (value: AspectRatio) => void;
   imageMode: ImageMode;
@@ -43,20 +48,36 @@ interface ControlsPanelProps {
 }
 
 const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
-  const { t } = useTranslation();
+  const { t, language, setLanguage } = useTranslation();
+
+  const toggleLanguage = () => {
+    setLanguage(language === 'en' ? 'ar' : 'en');
+  };
+
+  // FIX: Corrected check for flat lay styles. The previous check `props.backgroundStyle === 'flat_lay'` caused a type error.
+  const isFlatLay = props.backgroundStyle.startsWith('flat_lay');
 
   const renderApparelControls = () => (
     <>
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">Model & Pose</h3>
-        <SelectControl label={t('modelLabel')} value={props.modelAudience} onChange={e => props.setModelAudience(e.target.value as ModelAudience)} options={MODEL_AUDIENCES} />
-        <SelectControl label={t('poseLabel')} value={props.modelPose} onChange={e => props.setModelPose(e.target.value as ModelPose)} options={MODEL_POSES} disabled={!!props.backgroundImage} />
-        <ImageUploadControl label={t('backgroundImageLabel')} image={props.backgroundImage} setImage={props.setBackgroundImage} />
+        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">{t('modelLabel')} & {t('backgroundStyleLabel')}</h3>
+        <SelectControl label={t('modelLabel')} value={props.modelAudience} onChange={e => props.setModelAudience(e.target.value as ModelAudience)} options={MODEL_AUDIENCES} disabled={isFlatLay} />
+        <SelectControl label={t('backgroundStyleLabel')} value={props.backgroundStyle} onChange={e => props.setBackgroundStyle(e.target.value as BackgroundStyle)} options={BACKGROUND_STYLES} disabled={!!props.backgroundImage} />
+        <ImageUploadControl label={t('backgroundImageLabel')} image={props.backgroundImage} setImage={props.setBackgroundImage} aspect={16/9} />
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">Design</h3>
-        <ImageUploadControl label={t('logoImageLabel')} image={props.logoImage} setImage={props.setLogoImage} />
+        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">{t('designStyleLabel')}</h3>
+        <ImageUploadControl 
+            label={t('logoImageLabel')} 
+            image={props.logoImage} 
+            setImage={props.setLogoImage} 
+            aspect={1}
+            brightness={props.logoBrightness}
+            setBrightness={props.setLogoBrightness}
+            contrast={props.logoContrast}
+            setContrast={props.setLogoContrast}
+        />
         <InputControl 
             label={t('designSubjectLabel')} 
             placeholder={props.logoImage ? t('designSubjectFromLogoPlaceholder') : t('designSubjectPlaceholder')} 
@@ -69,7 +90,7 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
       </div>
 
        <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">Text</h3>
+        <h3 className="text-lg font-semibold text-gray-200 border-b border-gray-700 pb-2">{t('textLabel')}</h3>
         <InputControl label={t('textLabel')} placeholder={t('textPlaceholder')} value={props.text} onChange={e => props.setText(e.target.value)} />
         <SelectControl label={t('fontLabel')} value={props.font} onChange={e => props.setFont(e.target.value as TshirtFont)} options={TSHIRT_FONTS.map(f => ({id: f.id, nameKey: f.name}))} />
         <ColorPicker label={t('textColorLabel')} colors={PRODUCT_COLORS} selectedValue={props.textColor} onChange={props.setTextColor} />
@@ -82,6 +103,13 @@ const ControlsPanel: React.FC<ControlsPanelProps> = (props) => {
     <div className="w-full lg:w-1/3 xl:w-1/4 bg-gray-900 text-white p-6 overflow-y-auto h-full flex flex-col gap-8 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-indigo-400">{t('appTitle')}</h2>
+        <button
+          onClick={toggleLanguage}
+          className="text-sm font-medium text-gray-300 hover:text-white bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded-md transition-colors"
+          aria-label={`Switch to ${language === 'en' ? 'Arabic' : 'English'}`}
+        >
+          {language === 'en' ? 'العربية' : 'English'}
+        </button>
       </div>
 
       <SelectControl label={t('productTypeLabel')} value={props.productType} onChange={e => props.setProductType(e.target.value as ProductType)} options={PRODUCT_TYPES} />
@@ -124,23 +152,137 @@ const InputControl: React.FC<{ label: string, placeholder: string, value: string
   </div>
 );
 
+// --- Image Cropping Modal and Helpers ---
+
+// Helper function to generate cropped image data URL
+function getCroppedImg(
+  image: HTMLImageElement,
+  crop: PixelCrop
+): string {
+  const canvas = document.createElement('canvas');
+  const scaleX = image.naturalWidth / image.width;
+  const scaleY = image.naturalHeight / image.height;
+
+  canvas.width = Math.floor(crop.width * scaleX);
+  canvas.height = Math.floor(crop.height * scaleY);
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) {
+    throw new Error('Could not get canvas context');
+  }
+
+  ctx.drawImage(
+    image,
+    crop.x * scaleX,
+    crop.y * scaleY,
+    crop.width * scaleX,
+    crop.height * scaleY,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  return canvas.toDataURL('image/png');
+}
+
+const ImageCropModal: React.FC<{
+  src: string;
+  onClose: () => void;
+  onCrop: (croppedImageUrl: string) => void;
+  aspect?: number;
+}> = ({ src, onClose, onCrop, aspect = 1 }) => {
+  const { t } = useTranslation();
+  const imgRef = React.useRef<HTMLImageElement>(null);
+  const [crop, setCrop] = React.useState<Crop>();
+  const [completedCrop, setCompletedCrop] = React.useState<PixelCrop>();
+
+  function onImageLoad(e: React.SyntheticEvent<HTMLImageElement>) {
+    const { width, height } = e.currentTarget;
+    const initialCrop = centerCrop(
+      makeAspectCrop({ unit: '%', width: 90 }, aspect, width, height),
+      width,
+      height
+    );
+    setCrop(initialCrop);
+  }
+  
+  const handleCrop = () => {
+      if (completedCrop?.width && completedCrop?.height && imgRef.current) {
+          const croppedImageUrl = getCroppedImg(imgRef.current, completedCrop);
+          onCrop(croppedImageUrl);
+      }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4" role="dialog" aria-modal="true">
+        <div className="bg-gray-800 rounded-lg shadow-2xl p-6 w-full max-w-lg mx-auto text-white border border-gray-700">
+            <h3 className="text-xl font-semibold mb-4 text-indigo-400">{t('cropImageTitle')}</h3>
+            <div className="max-h-[60vh] overflow-y-auto mb-4 bg-gray-900/50 p-2 rounded-md">
+                 <ReactCrop
+                    crop={crop}
+                    onChange={(_, percentCrop) => setCrop(percentCrop)}
+                    onComplete={(c) => setCompletedCrop(c)}
+                    aspect={aspect}
+                    minWidth={50}
+                    minHeight={50}
+                 >
+                    <img
+                        ref={imgRef}
+                        alt="Image to crop"
+                        src={src}
+                        onLoad={onImageLoad}
+                        style={{ maxHeight: '55vh' }}
+                        className="w-full h-auto"
+                    />
+                 </ReactCrop>
+            </div>
+            <div className="flex justify-end gap-4 mt-6">
+                <button
+                    onClick={onClose}
+                    className="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 transition-colors"
+                >
+                    {t('cancelButton')}
+                </button>
+                <button
+                    onClick={handleCrop}
+                    className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 transition-colors font-semibold"
+                >
+                    {t('applyCropButton')}
+                </button>
+            </div>
+        </div>
+    </div>
+  )
+}
+
+
 const ImageUploadControl: React.FC<{
   label: string;
   image: string | null;
   setImage: (value: string | null) => void;
-}> = ({ label, image, setImage }) => {
+  aspect?: number;
+  brightness?: number;
+  setBrightness?: (value: number) => void;
+  contrast?: number;
+  setContrast?: (value: number) => void;
+}> = ({ label, image, setImage, aspect, brightness, setBrightness, contrast, setContrast }) => {
+  const { t } = useTranslation();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [imageToCrop, setImageToCrop] = React.useState<string | null>(null);
+
+  const showSliders = image && brightness !== undefined && setBrightness && contrast !== undefined && setContrast;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
-          alert("File is too large. Please select an image under 2MB.");
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+          alert("File is too large. Please select an image under 5MB.");
           return;
       }
       const reader = new FileReader();
       reader.onload = (loadEvent) => {
-        setImage(loadEvent.target?.result as string);
+        setImageToCrop(loadEvent.target?.result as string);
       };
       reader.onerror = () => {
         alert("Error reading file.");
@@ -148,12 +290,32 @@ const ImageUploadControl: React.FC<{
       reader.readAsDataURL(file);
     }
   };
+
+  const onCropComplete = (croppedImageUrl: string) => {
+    setImage(croppedImageUrl);
+    setImageToCrop(null);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
+  };
   
   const triggerFileSelect = () => fileInputRef.current?.click();
-  const removeImage = () => setImage(null);
+  const removeImage = () => {
+    setImage(null);
+    if (setBrightness) setBrightness(100);
+    if (setContrast) setContrast(100);
+  };
 
   return (
     <div>
+      {imageToCrop && (
+          <ImageCropModal
+              src={imageToCrop}
+              onClose={() => setImageToCrop(null)}
+              onCrop={onCropComplete}
+              aspect={aspect}
+          />
+      )}
       <label className="block text-sm font-medium text-gray-300 mb-2">{label}</label>
       <input
         type="file"
@@ -164,16 +326,60 @@ const ImageUploadControl: React.FC<{
         aria-hidden="true"
       />
       {image ? (
-        <div className="flex items-center gap-4">
-          <img src={image} alt="Preview" className="w-16 h-16 object-contain rounded-md bg-gray-700 p-1" />
-          <button
-            onClick={removeImage}
-            title="Remove image"
-            aria-label="Remove uploaded image"
-            className="p-2 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors"
-          >
-            <TrashIcon className="w-5 h-5" />
-          </button>
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <img 
+                src={image} 
+                alt="Preview" 
+                className="w-16 h-16 object-contain rounded-md bg-gray-700 p-1" 
+                style={showSliders ? { filter: `brightness(${brightness}%) contrast(${contrast}%)` } : {}}
+            />
+            <button
+              onClick={removeImage}
+              title="Remove image"
+              aria-label="Remove uploaded image"
+              className="p-2 rounded-full bg-red-600 hover:bg-red-700 text-white transition-colors"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          </div>
+
+          {showSliders && (
+            <div className="space-y-3 pt-2">
+              <div>
+                <div className="flex justify-between items-center text-xs text-gray-400 mb-1">
+                  <label htmlFor="brightness-slider" className="font-medium">{t('logoBrightnessLabel')}</label>
+                  <span>{brightness}%</span>
+                </div>
+                <input
+                  id="brightness-slider"
+                  type="range"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={brightness}
+                  onChange={(e) => setBrightness(parseInt(e.target.value, 10))}
+                  className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:bg-indigo-500 [&::-moz-range-thumb]:bg-indigo-500"
+                />
+              </div>
+              <div>
+                <div className="flex justify-between items-center text-xs text-gray-400 mb-1">
+                  <label htmlFor="contrast-slider" className="font-medium">{t('logoContrastLabel')}</label>
+                  <span>{contrast}%</span>
+                </div>
+                <input
+                  id="contrast-slider"
+                  type="range"
+                  min="0"
+                  max="200"
+                  step="1"
+                  value={contrast}
+                  onChange={(e) => setContrast(parseInt(e.target.value, 10))}
+                  className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:bg-indigo-500 [&::-moz-range-thumb]:bg-indigo-500"
+                />
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <button

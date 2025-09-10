@@ -6,7 +6,7 @@ import { generateTextSvg, generateEngravingSvg } from './services/svgService';
 import type {
   ProductType,
   DesignStyle,
-  ModelPose,
+  BackgroundStyle,
   ModelAudience,
   TshirtFont,
   TextStyle,
@@ -24,6 +24,11 @@ function App() {
   const [language, setLanguage] = useState<Language>('en');
   const t = useCallback((key: keyof typeof en) => translations[language][key] || key, [language]);
   const languageContextValue = { language, setLanguage, t };
+  
+  React.useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
 
   // UI State
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +40,8 @@ function App() {
   const [productType, setProductType] = useState<ProductType>('tshirt');
   const [designSubject, setDesignSubject] = useState('a majestic wolf howling at the moon');
   const [logoImage, setLogoImage] = useState<string | null>(null);
+  const [logoBrightness, setLogoBrightness] = useState(100);
+  const [logoContrast, setLogoContrast] = useState(100);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [text, setText] = useState('WILD SOUL');
   const [tshirtColor, setTshirtColor] = useState('#272727'); // Black
@@ -43,20 +50,59 @@ function App() {
   const [textStyle, setTextStyle] = useState<TextStyle>('none');
   const [designStyle, setDesignStyle] = useState<DesignStyle>('classic');
   const [modelAudience, setModelAudience] = useState<ModelAudience>('woman_30s_plus_size_confident');
-  const [modelPose, setModelPose] = useState<ModelPose>('standing');
+  const [backgroundStyle, setBackgroundStyle] = useState<BackgroundStyle>('studio_plain');
   const [aspectRatio, setAspectRatio] = useState<AspectRatio>('1:1');
   const [imageMode, setImageMode] = useState<ImageMode>('fit_blur');
+
+  // Helper function to apply brightness/contrast filters to an image data URL
+  const applyImageFilters = (dataUrl: string, brightness: number, contrast: number): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          return reject(new Error('Could not get canvas context'));
+        }
+        ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.onerror = (err) => {
+        reject(new Error('Failed to load image for filtering.'));
+      };
+      img.src = dataUrl;
+    });
+  };
+
 
   const handleGenerate = async () => {
     setIsLoading(true);
     setGeneratedImage(null);
     setError(null);
+    
+    let processedLogoImage = logoImage;
+    const needsFiltering = logoImage && (logoBrightness !== 100 || logoContrast !== 100);
+
+    if (needsFiltering) {
+      try {
+        processedLogoImage = await applyImageFilters(logoImage, logoBrightness, logoContrast);
+      } catch (e: any) {
+        console.error("Failed to apply image filters:", e);
+        setError(e.message || "Could not apply filters to the logo image.");
+        setIsLoading(false);
+        return;
+      }
+    }
 
     // This object would expand to include state for all product types
     const params = {
       productType,
       designSubject,
-      logoImage,
+      logoImage: processedLogoImage, // Use the potentially filtered image
       backgroundImage,
       text,
       tshirtColor,
@@ -65,7 +111,7 @@ function App() {
       textStyle,
       designStyle,
       modelAudience,
-      modelPose,
+      backgroundStyle,
       aspectRatio,
     };
 
@@ -146,6 +192,8 @@ function App() {
           productType={productType} setProductType={setProductType}
           designSubject={designSubject} setDesignSubject={setDesignSubject}
           logoImage={logoImage} setLogoImage={setLogoImage}
+          logoBrightness={logoBrightness} setLogoBrightness={setLogoBrightness}
+          logoContrast={logoContrast} setLogoContrast={setLogoContrast}
           backgroundImage={backgroundImage} setBackgroundImage={setBackgroundImage}
           text={text} setText={setText}
           tshirtColor={tshirtColor} setTshirtColor={setTshirtColor}
@@ -154,7 +202,7 @@ function App() {
           textStyle={textStyle} setTextStyle={setTextStyle}
           designStyle={designStyle} setDesignStyle={setDesignStyle}
           modelAudience={modelAudience} setModelAudience={setModelAudience}
-          modelPose={modelPose} setModelPose={setModelPose}
+          backgroundStyle={backgroundStyle} setBackgroundStyle={setBackgroundStyle}
           aspectRatio={aspectRatio} setAspectRatio={setAspectRatio}
           imageMode={imageMode} setImageMode={setImageMode}
           onGenerate={handleGenerate}

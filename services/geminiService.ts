@@ -2,12 +2,13 @@ import { GoogleGenAI } from "@google/genai";
 import type {
   ProductType,
   DesignStyle,
-  ModelPose,
   ModelAudience,
   AspectRatio,
+  BackgroundStyle,
 } from "../types";
 import {
   MODEL_AUDIENCES,
+  BACKGROUND_STYLES,
   FRAME_MODELS,
   MUG_MODELS,
   SIPPER_GLASS_MODELS,
@@ -74,27 +75,38 @@ const buildApparelPrompt = (
   textStyle: string,
   designStyle: DesignStyle,
   audience: ModelAudience,
-  pose: ModelPose,
+  backgroundStyle: BackgroundStyle,
   backgroundDescription: string | null
 ) => {
-  const modelDescription = getModelDescription(audience);
   const textPrompt = text
     ? `The design features the text "${text}" in a ${font} font, with a ${textColor} color and a ${textStyle} style.`
     : "The design does not contain any text.";
+    
+  const styleChoice = BACKGROUND_STYLES.find(s => s.id === backgroundStyle);
+  const styleDescription = styleChoice?.description || '';
 
   const settingPrompt = backgroundDescription
-    ? `The model is in a setting described as: "${backgroundDescription}".`
-    : `The model is in a ${pose.replace(/_/g, " ")} pose.`;
-    
-  return `Create an ultra-realistic 4K photo of a product mockup.
-    - Product: A ${color} ${productType}.
-    - Model: The ${productType} is worn by ${modelDescription}.
-    - Pose/Setting: ${settingPrompt}
-    - Design: The design on the ${productType} is: "${designSubject}" in a ${designStyle.replace(
-    /_/g,
-    " "
-  )} style. ${textPrompt}
-    - Details: The lighting should be professional and highlight the product. The focus is on the product. Ensure the model's face is realistic and expressive, but not the primary focus. Avoid any text or logos unless specified in the design.`;
+    ? `The setting is described as: "${backgroundDescription}".`
+    : styleDescription;
+
+  // FIX: Corrected the condition to check for flat lay styles. The previous check `backgroundStyle === 'flat_lay'` caused a type error.
+  if (styleChoice && styleChoice.description.includes("No model.")) {
+    // Flat lay prompt
+    return `Create an ultra-realistic 4K photo of a product mockup.
+      - Product: A ${color} ${productType}.
+      - Setting: ${settingPrompt}
+      - Design: The design on the ${productType} is: "${designSubject}" in a ${designStyle.replace(/_/g, " ")} style. ${textPrompt}
+      - Details: The lighting should be professional and highlight the product. The focus is on the product.`;
+  } else {
+    // Model prompt
+    const modelDescription = getModelDescription(audience);
+    return `Create an ultra-realistic 4K photo of a product mockup.
+      - Product: A ${color} ${productType}.
+      - Model: The ${productType} is worn by ${modelDescription}.
+      - Pose/Setting: ${settingPrompt} The model should have a natural and suitable pose for the environment.
+      - Design: The design on the ${productType} is: "${designSubject}" in a ${designStyle.replace(/_/g, " ")} style. ${textPrompt}
+      - Details: The lighting should be professional and highlight the product. The focus is on the product. Ensure the model's face is realistic and expressive, but not the primary focus. Avoid any text or logos unless specified in the design.`;
+  }
 };
 
 export const generateMockup = async (
@@ -145,7 +157,7 @@ export const generateMockup = async (
         params.textStyle,
         params.designStyle,
         params.modelAudience,
-        params.modelPose,
+        params.backgroundStyle,
         backgroundDescription
       );
       break;
