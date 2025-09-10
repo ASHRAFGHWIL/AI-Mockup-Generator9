@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export const UploadIcon = ({ className }: { className?: string }) => (
@@ -44,6 +43,12 @@ export const WandIcon = ({ className }: { className?: string }) => (
 export const DownloadIcon = ({ className }: { className?: string }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+    </svg>
+);
+
+export const ShareIcon = ({ className }: { className?: string }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 8h6m-4 10V4m-2 4l-3-3 3-3m5 14l3-3-3-3" />
     </svg>
 );
 

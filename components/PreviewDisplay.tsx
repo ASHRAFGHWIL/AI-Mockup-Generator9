@@ -1,5 +1,5 @@
 import React from 'react';
-import { WandIcon, DownloadIcon } from './icons';
+import { WandIcon, DownloadIcon, ShareIcon } from './icons';
 import type { ProductType, ImageMode } from '../types';
 import { useTranslation } from '../hooks/useTranslation';
 
@@ -13,10 +13,12 @@ interface PreviewDisplayProps {
   onDownloadTextPng: () => void;
   onDownloadEngravingSvg: () => void;
   onDownloadMockup: () => void;
+  onShare: () => void;
+  copyStatusMessage: string;
   imageMode: ImageMode;
 }
 
-const PreviewDisplay: React.FC<PreviewDisplayProps> = ({ generatedImage, isLoading, error, productType, onDownloadLogoPng, onDownloadTextSvg, onDownloadTextPng, onDownloadEngravingSvg, onDownloadMockup, imageMode }) => {
+const PreviewDisplay: React.FC<PreviewDisplayProps> = ({ generatedImage, isLoading, error, productType, onDownloadLogoPng, onDownloadTextSvg, onDownloadTextPng, onDownloadEngravingSvg, onDownloadMockup, onShare, copyStatusMessage, imageMode }) => {
     const { t } = useTranslation();
     
     const loadingMessages = React.useMemo(() => [
@@ -97,25 +99,41 @@ const PreviewDisplay: React.FC<PreviewDisplayProps> = ({ generatedImage, isLoadi
 
       {generatedImage && !isLoading && (
         <div className="flex flex-col items-center gap-4">
-            {/* Primary Action Button */}
-            {productType !== 'laser_engraving' ? (
-                <button
-                    onClick={onDownloadMockup}
-                    title="Download Mockup Image (PNG)"
-                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105"
-                >
-                    <DownloadIcon className="w-6 h-6" />
-                    <span className="text-lg">{t('downloadMockupButton')}</span>
-                </button>
-            ) : (
-                 <button
-                    onClick={onDownloadEngravingSvg}
-                    title="Download Laser Engraving SVG File"
-                    className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105"
-                >
-                    <DownloadIcon className="w-6 h-6" />
-                    <span className="text-lg">{t('downloadEngravingButton')}</span>
-                </button>
+            <div className="flex items-center gap-4">
+              {/* Primary Action Buttons */}
+              {productType !== 'laser_engraving' ? (
+                  <>
+                      <button
+                          onClick={onDownloadMockup}
+                          title="Download Mockup Image (PNG)"
+                          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105"
+                      >
+                          <DownloadIcon className="w-6 h-6" />
+                          <span className="text-lg">{t('downloadMockupButton')}</span>
+                      </button>
+                      <button
+                          onClick={onShare}
+                          title="Share Mockup"
+                          className="flex items-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105"
+                      >
+                          <ShareIcon className="w-6 h-6" />
+                          <span className="text-lg">{t('shareMockupButton')}</span>
+                      </button>
+                  </>
+              ) : (
+                   <button
+                      onClick={onDownloadEngravingSvg}
+                      title="Download Laser Engraving SVG File"
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all transform hover:scale-105"
+                  >
+                      <DownloadIcon className="w-6 h-6" />
+                      <span className="text-lg">{t('downloadEngravingButton')}</span>
+                  </button>
+              )}
+            </div>
+            
+            {copyStatusMessage && (
+                <p className="text-sm text-green-400 transition-opacity duration-300">{copyStatusMessage}</p>
             )}
 
             {/* Asset downloads */}
